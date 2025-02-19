@@ -1,49 +1,40 @@
+
 import { useState } from "react";
-import { cn } from "@/lib/utils";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Send } from "lucide-react";
-import { useCompletion } from "ai/react";
-import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/components/ui/use-toast";
 import { Badge } from "@/components/ui/badge";
-import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
-import { Slider } from "@/components/ui/slider";
-import { Separator } from "@/components/ui/separator";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { useNavigate } from 'react-router-dom';
 
 export function VercelV0Chat({ onSubmit, inBuildMode }: { onSubmit: (message: string) => void, inBuildMode: boolean }) {
   const navigate = useNavigate();
-  const [isPro, setIsPro] = useState(false);
-  const [temperature, setTemperature] = useState<number>(0.5);
+  const [input, setInput] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
-  const {
-    completion,
-    input,
-    setInput,
-    handleInputChange,
-    handleSubmit,
-    isLoading,
-  } = useCompletion({
-    api: "/api/completion",
-    onFinish: (prompt: string) => {
+
+  const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    if (!input.trim()) return;
+
+    setIsLoading(true);
+    try {
+      await onSubmit(input);
       toast({
         title: "Generated!",
         description: "Your app has been generated.",
       });
-      onSubmit(prompt);
-    },
-    onError: (error: Error) => {
+      setInput("");
+    } catch (error: any) {
       toast({
         title: "Uh oh! Something went wrong.",
         description: error.message,
         variant: "destructive",
       });
-    },
-  });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div className="w-full">
@@ -62,18 +53,15 @@ export function VercelV0Chat({ onSubmit, inBuildMode }: { onSubmit: (message: st
         <Input
           type="text"
           value={input}
-          onChange={handleInputChange}
+          onChange={(e) => setInput(e.target.value)}
           placeholder="Design a landing page for a SaaS product..."
           className="rounded-r-none"
         />
         <Button
           type="submit"
-          onClick={(e) => {
-            e.preventDefault();
-            handleSubmit(e);
-          }}
+          onClick={handleSubmit}
           className="rounded-l-none"
-          isLoading={isLoading}
+          disabled={isLoading}
         >
           {isLoading ? <Send className="animate-spin" /> : <Send />}
         </Button>
