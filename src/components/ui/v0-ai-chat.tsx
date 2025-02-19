@@ -84,10 +84,32 @@ export function VercelV0Chat() {
         if (e.key === "Enter" && !e.shiftKey) {
             e.preventDefault();
             if (value.trim()) {
-                setValue("");
-                adjustHeight(true);
+                handleSendMessage();
             }
         }
+    };
+
+    const handleSendMessage = () => {
+        if (value.trim()) {
+            console.log("Sending message:", value);
+            setValue("");
+            adjustHeight(true);
+        }
+    };
+
+    const handleActionClick = (action: string) => {
+        const prompts = {
+            "Clone a Screenshot": "I want to clone this screenshot:",
+            "Import from Figma": "I want to import this Figma design:",
+            "Upload a Project": "I want to upload a project:",
+            "Landing Page": "Help me create a landing page with these requirements:",
+            "Sign Up Form": "I need a sign up form with these fields:",
+        };
+        setValue(prompts[action as keyof typeof prompts]);
+        if (textareaRef.current) {
+            textareaRef.current.focus();
+        }
+        adjustHeight();
     };
 
     return (
@@ -130,6 +152,7 @@ export function VercelV0Chat() {
                             <button
                                 type="button"
                                 className="group p-2 hover:bg-neutral-800 rounded-lg transition-colors flex items-center gap-1"
+                                onClick={() => console.log("Attach clicked")}
                             >
                                 <Paperclip className="w-4 h-4 text-white" />
                                 <span className="text-xs text-zinc-400 hidden group-hover:inline transition-opacity">
@@ -141,6 +164,7 @@ export function VercelV0Chat() {
                             <button
                                 type="button"
                                 className="px-2 py-1 rounded-lg text-sm text-zinc-400 transition-colors border border-dashed border-zinc-700 hover:border-zinc-600 hover:bg-zinc-800 flex items-center justify-between gap-1"
+                                onClick={() => console.log("New project clicked")}
                             >
                                 <PlusIcon className="w-4 h-4" />
                                 Project
@@ -153,6 +177,7 @@ export function VercelV0Chat() {
                                         ? "bg-white text-black"
                                         : "text-zinc-400"
                                 )}
+                                onClick={handleSendMessage}
                             >
                                 <ArrowUpIcon
                                     className={cn(
@@ -172,22 +197,27 @@ export function VercelV0Chat() {
                     <ActionButton
                         icon={<ImageIcon className="w-4 h-4" />}
                         label="Clone a Screenshot"
+                        onClick={() => handleActionClick("Clone a Screenshot")}
                     />
                     <ActionButton
                         icon={<Figma className="w-4 h-4" />}
                         label="Import from Figma"
+                        onClick={() => handleActionClick("Import from Figma")}
                     />
                     <ActionButton
                         icon={<FileUp className="w-4 h-4" />}
                         label="Upload a Project"
+                        onClick={() => handleActionClick("Upload a Project")}
                     />
                     <ActionButton
                         icon={<MonitorIcon className="w-4 h-4" />}
                         label="Landing Page"
+                        onClick={() => handleActionClick("Landing Page")}
                     />
                     <ActionButton
                         icon={<CircleUserRound className="w-4 h-4" />}
                         label="Sign Up Form"
+                        onClick={() => handleActionClick("Sign Up Form")}
                     />
                 </div>
             </div>
@@ -198,13 +228,15 @@ export function VercelV0Chat() {
 interface ActionButtonProps {
     icon: React.ReactNode;
     label: string;
+    onClick?: () => void;
 }
 
-function ActionButton({ icon, label }: ActionButtonProps) {
+function ActionButton({ icon, label, onClick }: ActionButtonProps) {
     return (
         <button
             type="button"
             className="flex items-center gap-2 px-4 py-2 bg-neutral-900 hover:bg-neutral-800 rounded-full border border-neutral-800 text-neutral-400 hover:text-white transition-colors"
+            onClick={onClick}
         >
             {icon}
             <span className="text-xs">{label}</span>
