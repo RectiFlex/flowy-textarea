@@ -1,7 +1,7 @@
 
 import { useState, useCallback } from 'react';
 import { Announcement } from "@/components/ui/announcement";
-import { ChevronLeft, ChevronRight, FolderKanban, Users, BookOpen, HelpCircle, MessageSquarePlus } from 'lucide-react';
+import { MessageSquarePlus, FolderKanban, Users, BookOpen, HelpCircle } from 'lucide-react';
 
 const NAV_ITEMS = [
   {
@@ -25,14 +25,6 @@ const NAV_ITEMS = [
     icon: HelpCircle,
     title: "Feedback"
   }
-];
-
-const RECENT_PROJECTS = [
-  "Landing Page Design",
-  "API Integration Help",
-  "Next.js Auth Setup",
-  "Database Schema Review",
-  "Tailwind Components",
 ];
 
 export function ProjectSidebar() {
@@ -75,27 +67,7 @@ export function ProjectSidebar() {
           ))}
         </nav>
 
-        <div className={`mt-6 pt-6 border-t border-white/10 transition-opacity duration-200 ${
-          isCollapsed ? 'opacity-0' : 'opacity-100'
-        }`}>
-          <div className="flex items-center justify-between mb-4">
-            <span className="text-sm px-2 text-white/60">Recent Projects</span>
-          </div>
-          <div className="space-y-2">
-            {RECENT_PROJECTS.map((project, index) => (
-              <button 
-                key={index} 
-                className="w-full text-left px-2 py-1 text-sm text-white/70 hover:text-white hover:bg-white/5 rounded-lg transition-colors"
-              >
-                {project}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <div className={`mt-auto transition-opacity duration-200 ${
-          isCollapsed ? 'opacity-0' : 'opacity-100'
-        }`}>
+        <div className="mt-auto">
           <Announcement
             title="New Feature"
             description="Create and share your project templates with the community."
