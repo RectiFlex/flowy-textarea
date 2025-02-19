@@ -1,3 +1,4 @@
+
 import { VercelV0Chat } from "@/components/ui/v0-ai-chat";
 import { Squares } from "@/components/ui/squares-background";
 import { useState, useEffect } from "react";
@@ -37,14 +38,15 @@ const Index = () => {
     try {
       setLoadingState('Generating app from your prompt...');
       
+      // Using maybeSingle() instead of single() to handle the case where no secret is found
       const { data: secretData, error: secretError } = await supabase
         .from('secrets')
         .select('secret')
         .eq('name', 'ANTHROPIC_API_KEY')
-        .single();
+        .maybeSingle();
 
       if (secretError || !secretData) {
-        throw new Error('Anthropic API key not found');
+        throw new Error('Anthropic API key not found. Please ensure you have added it to the secrets table.');
       }
 
       const ANTHROPIC_API_KEY = secretData.secret;
