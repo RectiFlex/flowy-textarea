@@ -1,4 +1,3 @@
-
 import { VercelV0Chat } from "@/components/ui/v0-ai-chat";
 import { Squares } from "@/components/ui/squares-background";
 import { useState, useEffect } from "react";
@@ -20,10 +19,25 @@ const Index = () => {
   const [webcontainerInstance, setWebcontainerInstance] = useState<WebContainer | null>(null);
 
   useEffect(() => {
-    if (isBuilding) {
+    return () => {
+      if (webcontainerInstance) {
+        webcontainerInstance.teardown().catch(console.error);
+      }
+    };
+  }, [webcontainerInstance]);
+
+  useEffect(() => {
+    if (isBuilding && !webcontainerInstance) {
       const bootWebContainer = async () => {
         try {
+          if (webcontainerInstance) {
+            await webcontainerInstance.teardown();
+          }
+
           setLoadingState('Initializing development environment...');
+          
+          await new Promise(resolve => setTimeout(resolve, 1000));
+          
           const wc = await WebContainer.boot();
           setWebcontainerInstance(wc);
           setLoadingState('Setting up project files...');
@@ -35,6 +49,8 @@ const Index = () => {
                   <!DOCTYPE html>
                   <html>
                     <head>
+                      <meta charset="UTF-8">
+                      <meta name="viewport" content="width=device-width, initial-scale=1.0">
                       <meta http-equiv="Cross-Origin-Opener-Policy" content="same-origin">
                       <meta http-equiv="Cross-Origin-Embedder-Policy" content="require-corp">
                       <title>ONE|X App</title>
@@ -52,27 +68,44 @@ const Index = () => {
                   {
                     "name": "onex-app",
                     "type": "module",
-                    "dependencies": {}
+                    "scripts": {
+                      "start": "vite",
+                      "build": "vite build",
+                      "serve": "vite preview"
+                    },
+                    "dependencies": {
+                      "react": "^18.2.0",
+                      "react-dom": "^18.2.0"
+                    },
+                    "devDependencies": {
+                      "@vitejs/plugin-react": "^4.0.0",
+                      "vite": "^4.3.9"
+                    }
                   }
                 `
               }
             }
           });
+
+          setLoadingState('Installing dependencies...');
+          await wc.install();
+          
           setLoadingState('');
         } catch (error) {
           console.error('Failed to boot WebContainer:', error);
           toast({
             title: "Error",
-            description: "Failed to initialize the development environment. Please ensure you're using a modern browser and try again.",
+            description: "Failed to initialize the development environment. Please try refreshing the page.",
             variant: "destructive"
           });
           setLoadingState('');
+          setIsBuilding(false);
         }
       };
 
       bootWebContainer();
     }
-  }, [isBuilding]);
+  }, [isBuilding, webcontainerInstance]);
 
   const handleSubmit = (message: string) => {
     setMessages(prev => [...prev, { role: 'user', content: message }]);
@@ -99,7 +132,6 @@ const Index = () => {
         <div className="flex-1">
           {isBuilding ? (
             <ResizablePanelGroup direction="horizontal" className="h-screen">
-              {/* Chat Interface - Left Side */}
               <ResizablePanel defaultSize={50} minSize={30}>
                 <div className="h-screen flex flex-col border-r border-neutral-800">
                   <div className="flex-1 overflow-auto p-4 space-y-4">
@@ -129,7 +161,6 @@ const Index = () => {
                     ))}
                   </div>
                   
-                  {/* Chat Input */}
                   <div className="p-4 border-t border-neutral-800">
                     <div className="relative w-full rounded-xl">
                       <GlowingEffect
@@ -156,7 +187,6 @@ const Index = () => {
 
               <ResizableHandle withHandle />
 
-              {/* Web Container - Right Side */}
               <ResizablePanel defaultSize={50} minSize={30}>
                 <div className="h-screen relative p-4">
                   {loadingState && (
