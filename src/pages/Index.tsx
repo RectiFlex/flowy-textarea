@@ -2,48 +2,7 @@
 import { VercelV0Chat } from "@/components/ui/v0-ai-chat";
 import { Squares } from "@/components/ui/squares-background";
 import { useState, useEffect } from "react";
-import { File, Folder, Tree } from "@/components/ui/file-tree";
-import { Separator } from "@/components/ui/separator";
 import { WebContainer } from '@webcontainer/api';
-
-const PROJECT_FILES = [
-  {
-    id: "1",
-    name: "src",
-    children: [
-      {
-        id: "2",
-        name: "components",
-        children: [
-          {
-            id: "3",
-            name: "ui",
-            children: [
-              {
-                id: "4",
-                name: "button.tsx",
-              },
-              {
-                id: "5",
-                name: "dialog.tsx",
-              },
-            ],
-          },
-        ],
-      },
-      {
-        id: "6",
-        name: "pages",
-        children: [
-          {
-            id: "7",
-            name: "index.tsx",
-          },
-        ],
-      },
-    ],
-  },
-];
 
 const Index = () => {
   const [isBuilding, setIsBuilding] = useState(false);
@@ -80,6 +39,17 @@ const Index = () => {
                 `,
               },
             },
+            'package.json': {
+              file: {
+                contents: `
+                  {
+                    "name": "example-app",
+                    "type": "module",
+                    "dependencies": {}
+                  }
+                `
+              }
+            }
           });
         } catch (error) {
           console.error('Failed to boot WebContainer:', error);
@@ -151,54 +121,12 @@ const Index = () => {
           </div>
 
           {/* Web Container - Right Side */}
-          <div className="w-1/2 h-full flex flex-col">
-            {/* Top Section with File Tree */}
-            <div className="flex h-2/3">
-              {/* File Tree */}
-              <div className="w-64 h-full border-r border-neutral-800 bg-black/20 p-4">
-                <Tree
-                  className="h-full rounded-md"
-                  initialExpandedItems={["1", "2", "3"]}
-                >
-                  <Folder element="src" value="1">
-                    <Folder element="components" value="2">
-                      <Folder element="ui" value="3">
-                        <File value="4">button.tsx</File>
-                        <File value="5">dialog.tsx</File>
-                      </Folder>
-                    </Folder>
-                    <Folder element="pages" value="6">
-                      <File value="7">index.tsx</File>
-                    </Folder>
-                  </Folder>
-                </Tree>
-              </div>
-
-              {/* Preview Area */}
-              <div className="flex-1 flex flex-col">
-                <div className="h-10 bg-neutral-900 border-b border-neutral-800 flex items-center px-4">
-                  <button className="px-4 py-2 text-sm text-blue-400 border-b-2 border-blue-400">Code</button>
-                  <button className="px-4 py-2 text-sm text-neutral-400">Preview</button>
-                </div>
-                <div className="flex-1 p-4 bg-black/20">
-                  <iframe
-                    id="webcontainer-iframe"
-                    className="w-full h-full bg-white rounded-lg"
-                    title="WebContainer Preview"
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* Terminal */}
-            <div className="h-1/3 border-t border-neutral-800 p-4 bg-black/20">
-              <div className="h-full rounded-md bg-black/50 p-4 font-mono text-sm text-neutral-300 overflow-auto">
-                <p className="text-green-500">$ Starting WebContainer...</p>
-                <p className="text-neutral-500 mt-2">Initializing development environment</p>
-                <p className="text-neutral-500">Mounting initial files...</p>
-                <p className="text-neutral-400 mt-2 animate-pulse">▋</p>
-              </div>
-            </div>
+          <div className="w-1/2 h-full">
+            <iframe
+              id="webcontainer-iframe"
+              className="w-full h-full bg-white"
+              title="WebContainer Preview"
+            />
           </div>
         </div>
       ) : (
