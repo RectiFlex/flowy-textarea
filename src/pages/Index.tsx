@@ -2,6 +2,47 @@
 import { VercelV0Chat } from "@/components/ui/v0-ai-chat";
 import { Squares } from "@/components/ui/squares-background";
 import { useState } from "react";
+import { File, Folder, Tree } from "@/components/ui/file-tree";
+import { Separator } from "@/components/ui/separator";
+
+const PROJECT_FILES = [
+  {
+    id: "1",
+    name: "src",
+    children: [
+      {
+        id: "2",
+        name: "components",
+        children: [
+          {
+            id: "3",
+            name: "ui",
+            children: [
+              {
+                id: "4",
+                name: "button.tsx",
+              },
+              {
+                id: "5",
+                name: "dialog.tsx",
+              },
+            ],
+          },
+        ],
+      },
+      {
+        id: "6",
+        name: "pages",
+        children: [
+          {
+            id: "7",
+            name: "index.tsx",
+          },
+        ],
+      },
+    ],
+  },
+];
 
 const Index = () => {
   const [isBuilding, setIsBuilding] = useState(false);
@@ -13,15 +54,11 @@ const Index = () => {
   ]);
 
   const handleSubmit = (message: string) => {
-    // Add user message
     setMessages(prev => [...prev, { role: 'user', content: message }]);
-    
-    // Add assistant response
     setMessages(prev => [...prev, { 
       role: 'assistant', 
       content: 'I\'ll help you build that. Let me start the process...'
     }]);
-    
     setIsBuilding(true);
   };
 
@@ -78,17 +115,34 @@ const Index = () => {
           </div>
           
           {/* Preview Container */}
-          <div className="w-1/2 h-full bg-neutral-900/50 p-4">
-            <div className="w-full h-full rounded-xl border border-neutral-800 bg-black/50 backdrop-blur-sm overflow-hidden">
-              <div className="h-8 bg-neutral-900 border-b border-neutral-800 flex items-center px-4">
-                <div className="flex items-center space-x-2">
-                  <div className="w-3 h-3 rounded-full bg-red-500"></div>
-                  <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-                  <div className="w-3 h-3 rounded-full bg-green-500"></div>
-                </div>
-              </div>
-              <div className="p-4 text-neutral-400 text-sm">
-                Building your application...
+          <div className="w-1/2 h-full bg-neutral-900/50 flex flex-col">
+            {/* File Tree */}
+            <div className="h-1/2 border-b border-neutral-800 p-4">
+              <Tree
+                className="h-full rounded-md bg-black/50 border border-neutral-800"
+                initialExpandedItems={["1", "2", "3"]}
+              >
+                <Folder element="src" value="1">
+                  <Folder element="components" value="2">
+                    <Folder element="ui" value="3">
+                      <File value="4">button.tsx</File>
+                      <File value="5">dialog.tsx</File>
+                    </Folder>
+                  </Folder>
+                  <Folder element="pages" value="6">
+                    <File value="7">index.tsx</File>
+                  </Folder>
+                </Folder>
+              </Tree>
+            </div>
+
+            {/* Terminal */}
+            <div className="flex-1 p-4">
+              <div className="h-full rounded-md border border-neutral-800 bg-black/50 p-4 font-mono text-sm text-neutral-300 overflow-auto">
+                <p className="text-green-500">$ Starting development server...</p>
+                <p className="text-neutral-500 mt-2">Ready - started server on 0.0.0.0:3000</p>
+                <p className="text-neutral-500">Event: compiled client and server successfully in 300 ms</p>
+                <p className="text-neutral-400 mt-2 animate-pulse">▋</p>
               </div>
             </div>
           </div>
