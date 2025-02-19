@@ -8,6 +8,11 @@ import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/componen
 import { GlowingEffect } from "@/components/ui/glowing-effect";
 import { supabase } from "@/integrations/supabase/client";
 
+// Define a type for the secret response
+type SecretResponse = {
+  secret: string;
+}
+
 const Index = () => {
   const [isBuilding, setIsBuilding] = useState(false);
   const [loadingState, setLoadingState] = useState<string>('');
@@ -38,12 +43,12 @@ const Index = () => {
     try {
       setLoadingState('Generating app from your prompt...');
       
-      // Using maybeSingle() instead of single() to handle the case where no secret is found
+      // Use type assertion to tell TypeScript about the structure
       const { data: secretData, error: secretError } = await supabase
         .from('secrets')
         .select('secret')
         .eq('name', 'ANTHROPIC_API_KEY')
-        .maybeSingle();
+        .maybeSingle<SecretResponse>();
 
       if (secretError || !secretData) {
         throw new Error('Anthropic API key not found. Please ensure you have added it to the secrets table.');
