@@ -83,8 +83,8 @@ const Index = () => {
   };
 
   return (
-    <div className="relative min-h-screen w-full">
-      <div className="fixed inset-0 -z-10">
+    <div className="fixed inset-0 w-full">
+      <div className="absolute inset-0 -z-10">
         <Squares 
           direction="diagonal"
           speed={0.5}
@@ -95,10 +95,10 @@ const Index = () => {
       </div>
       
       {isBuilding ? (
-        <ResizablePanelGroup direction="horizontal" className="w-full h-screen">
+        <ResizablePanelGroup direction="horizontal" className="min-h-screen">
           {/* Chat Interface - Left Side */}
           <ResizablePanel defaultSize={50} minSize={30}>
-            <div className="h-full flex flex-col border-r border-neutral-800">
+            <div className="h-screen flex flex-col border-r border-neutral-800">
               <div className="flex-1 overflow-auto p-4 space-y-4">
                 {messages.map((message, index) => (
                   <div key={index} className="flex items-start gap-3">
@@ -139,7 +139,7 @@ const Index = () => {
 
           {/* Web Container - Right Side */}
           <ResizablePanel defaultSize={50} minSize={30}>
-            <div className="h-full relative">
+            <div className="h-screen relative">
               {loadingState && (
                 <div className="absolute inset-0 flex items-center justify-center bg-neutral-900/80 z-10">
                   <div className="text-white text-center">
