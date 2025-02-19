@@ -41,7 +41,7 @@ export function ProjectSidebar() {
     <div 
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      className={`relative h-screen backdrop-blur-xl bg-background/10 border-r border-white/20 shadow-[0_4px_12px_-2px_rgba(0,0,0,0.3)] transition-all duration-300 ease-in-out ${
+      className={`relative h-screen backdrop-blur-xl bg-background/10 border-r border-white/20 shadow-[0_4px_12px_-2px_rgba(0,0,0,0.3)] transition-all duration-300 ease-in-out rounded-r-2xl ${
         isCollapsed ? 'w-16' : 'w-60'
       }`}
     >
