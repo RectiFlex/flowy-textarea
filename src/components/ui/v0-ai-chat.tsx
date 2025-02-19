@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from "react";
@@ -74,9 +75,10 @@ function useAutoResizeTextarea({
 
 interface VercelV0ChatProps {
     onSubmit: () => void;
+    inBuildMode: boolean;
 }
 
-export function VercelV0Chat({ onSubmit }: VercelV0ChatProps) {
+export function VercelV0Chat({ onSubmit, inBuildMode }: VercelV0ChatProps) {
     const [value, setValue] = useState("");
     const { textareaRef, adjustHeight } = useAutoResizeTextarea({
         minHeight: 60,
@@ -115,6 +117,76 @@ export function VercelV0Chat({ onSubmit }: VercelV0ChatProps) {
         }
         adjustHeight();
     };
+
+    if (inBuildMode) {
+        return (
+            <div className="w-full">
+                <div className="relative bg-neutral-900 rounded-xl border border-neutral-800">
+                    <div className="overflow-y-auto">
+                        <Textarea
+                            ref={textareaRef}
+                            value={value}
+                            onChange={(e) => {
+                                setValue(e.target.value);
+                                adjustHeight();
+                            }}
+                            onKeyDown={handleKeyDown}
+                            placeholder="Continue the conversation..."
+                            className={cn(
+                                "w-full px-4 py-3",
+                                "resize-none",
+                                "bg-transparent",
+                                "border-none",
+                                "text-white text-sm",
+                                "focus:outline-none",
+                                "focus-visible:ring-0 focus-visible:ring-offset-0",
+                                "placeholder:text-neutral-500 placeholder:text-sm",
+                                "min-h-[60px]"
+                            )}
+                            style={{
+                                overflow: "hidden",
+                            }}
+                        />
+                    </div>
+
+                    <div className="flex items-center justify-between p-3">
+                        <div className="flex items-center gap-2">
+                            <button
+                                type="button"
+                                className="group p-2 hover:bg-neutral-800 rounded-lg transition-colors flex items-center gap-1"
+                                onClick={() => console.log("Attach clicked")}
+                            >
+                                <Paperclip className="w-4 h-4 text-white" />
+                                <span className="text-xs text-zinc-400 hidden group-hover:inline transition-opacity">
+                                    Attach
+                                </span>
+                            </button>
+                        </div>
+                        <button
+                            type="button"
+                            className={cn(
+                                "px-1.5 py-1.5 rounded-lg text-sm transition-colors border border-zinc-700 hover:border-zinc-600 hover:bg-zinc-800 flex items-center justify-between gap-1",
+                                value.trim()
+                                    ? "bg-white text-black"
+                                    : "text-zinc-400"
+                            )}
+                            onClick={handleSendMessage}
+                        >
+                            <ArrowUpIcon
+                                className={cn(
+                                    "w-4 h-4",
+                                    value.trim()
+                                        ? "text-black"
+                                        : "text-zinc-400"
+                                )}
+                            />
+                            <span className="sr-only">Send</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="flex flex-col w-full p-4 space-y-8">
