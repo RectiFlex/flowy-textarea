@@ -1,4 +1,3 @@
-
 import { VercelV0Chat } from "@/components/ui/v0-ai-chat";
 import { Squares } from "@/components/ui/squares-background";
 import { useState, useEffect } from "react";
@@ -6,6 +5,7 @@ import { WebContainer } from '@webcontainer/api';
 import { useToast } from "@/components/ui/use-toast";
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
 import { GlowingEffect } from "@/components/ui/glowing-effect";
+import { ProjectSidebar } from "@/components/ProjectSidebar";
 
 const Index = () => {
   const [isBuilding, setIsBuilding] = useState(false);
@@ -95,24 +95,45 @@ const Index = () => {
         />
       </div>
       
-      {isBuilding ? (
-        <ResizablePanelGroup direction="horizontal" className="min-h-screen">
-          {/* Chat Interface - Left Side */}
-          <ResizablePanel defaultSize={50} minSize={30}>
-            <div className="h-screen flex flex-col border-r border-neutral-800">
-              <div className="flex-1 overflow-auto p-4 space-y-4">
-                {messages.map((message, index) => (
-                  <div key={index} className="flex items-start gap-3">
-                    <div className="w-8 h-8 rounded-lg bg-neutral-800 flex items-center justify-center shrink-0">
-                      <span className="text-sm text-white">
-                        {message.role === 'assistant' ? 'ONE|X' : 'you'}
-                      </span>
-                    </div>
-                    <div className={`relative flex-1 rounded-lg p-4 ${
-                      message.role === 'assistant' 
-                        ? 'bg-neutral-900/50 text-neutral-200' 
-                        : 'bg-blue-600/20 text-blue-200'
-                    }`}>
+      <div className="flex h-screen">
+        <ProjectSidebar />
+        
+        <div className="flex-1">
+          {isBuilding ? (
+            <ResizablePanelGroup direction="horizontal" className="h-screen">
+              {/* Chat Interface - Left Side */}
+              <ResizablePanel defaultSize={50} minSize={30}>
+                <div className="h-screen flex flex-col border-r border-neutral-800">
+                  <div className="flex-1 overflow-auto p-4 space-y-4">
+                    {messages.map((message, index) => (
+                      <div key={index} className="flex items-start gap-3">
+                        <div className="w-8 h-8 rounded-lg bg-neutral-800 flex items-center justify-center shrink-0">
+                          <span className="text-sm text-white">
+                            {message.role === 'assistant' ? 'ONE|X' : 'you'}
+                          </span>
+                        </div>
+                        <div className={`relative flex-1 rounded-lg p-4 ${
+                          message.role === 'assistant' 
+                            ? 'bg-neutral-900/50 text-neutral-200' 
+                            : 'bg-blue-600/20 text-blue-200'
+                        }`}>
+                          <GlowingEffect
+                            spread={40}
+                            glow={true}
+                            disabled={false}
+                            proximity={64}
+                            inactiveZone={0.01}
+                            borderWidth={2}
+                          />
+                          <p className="text-sm relative z-10">{message.content}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  
+                  {/* Chat Input */}
+                  <div className="p-4 border-t border-neutral-800">
+                    <div className="relative w-full rounded-xl">
                       <GlowingEffect
                         spread={40}
                         glow={true}
@@ -121,73 +142,58 @@ const Index = () => {
                         inactiveZone={0.01}
                         borderWidth={2}
                       />
-                      <p className="text-sm relative z-10">{message.content}</p>
+                      <VercelV0Chat 
+                        onSubmit={(msg: string) => {
+                          setMessages(prev => [...prev, 
+                            { role: 'user', content: msg },
+                            { role: 'assistant', content: 'Processing your request...' }
+                          ]);
+                        }} 
+                        inBuildMode={true} 
+                      />
                     </div>
                   </div>
-                ))}
-              </div>
-              
-              {/* Chat Input */}
-              <div className="p-4 border-t border-neutral-800">
-                <div className="relative w-full rounded-xl">
-                  <GlowingEffect
-                    spread={40}
-                    glow={true}
-                    disabled={false}
-                    proximity={64}
-                    inactiveZone={0.01}
-                    borderWidth={2}
-                  />
-                  <VercelV0Chat 
-                    onSubmit={(msg: string) => {
-                      setMessages(prev => [...prev, 
-                        { role: 'user', content: msg },
-                        { role: 'assistant', content: 'Processing your request...' }
-                      ]);
-                    }} 
-                    inBuildMode={true} 
+                </div>
+              </ResizablePanel>
+
+              <ResizableHandle withHandle />
+
+              {/* Web Container - Right Side */}
+              <ResizablePanel defaultSize={50} minSize={30}>
+                <div className="h-screen relative">
+                  {loadingState && (
+                    <div className="absolute inset-0 flex items-center justify-center bg-neutral-900/80 z-10">
+                      <div className="text-white text-center">
+                        <div className="animate-spin h-8 w-8 border-4 border-t-blue-500 border-neutral-700 rounded-full mb-4 mx-auto"></div>
+                        <p>{loadingState}</p>
+                      </div>
+                    </div>
+                  )}
+                  <iframe
+                    id="webcontainer-iframe"
+                    className="w-full h-full bg-neutral-900"
+                    title="WebContainer Preview"
                   />
                 </div>
+              </ResizablePanel>
+            </ResizablePanelGroup>
+          ) : (
+            <div className="flex items-center justify-center min-h-screen">
+              <div className="relative w-full max-w-2xl rounded-xl">
+                <GlowingEffect
+                  spread={40}
+                  glow={true}
+                  disabled={false}
+                  proximity={64}
+                  inactiveZone={0.01}
+                  borderWidth={2}
+                />
+                <VercelV0Chat onSubmit={handleSubmit} inBuildMode={false} />
               </div>
             </div>
-          </ResizablePanel>
-
-          <ResizableHandle withHandle />
-
-          {/* Web Container - Right Side */}
-          <ResizablePanel defaultSize={50} minSize={30}>
-            <div className="h-screen relative">
-              {loadingState && (
-                <div className="absolute inset-0 flex items-center justify-center bg-neutral-900/80 z-10">
-                  <div className="text-white text-center">
-                    <div className="animate-spin h-8 w-8 border-4 border-t-blue-500 border-neutral-700 rounded-full mb-4 mx-auto"></div>
-                    <p>{loadingState}</p>
-                  </div>
-                </div>
-              )}
-              <iframe
-                id="webcontainer-iframe"
-                className="w-full h-full bg-neutral-900"
-                title="WebContainer Preview"
-              />
-            </div>
-          </ResizablePanel>
-        </ResizablePanelGroup>
-      ) : (
-        <div className="flex items-center justify-center min-h-screen">
-          <div className="relative w-full max-w-2xl rounded-xl">
-            <GlowingEffect
-              spread={40}
-              glow={true}
-              disabled={false}
-              proximity={64}
-              inactiveZone={0.01}
-              borderWidth={2}
-            />
-            <VercelV0Chat onSubmit={handleSubmit} inBuildMode={false} />
-          </div>
+          )}
         </div>
-      )}
+      </div>
     </div>
   );
 };
