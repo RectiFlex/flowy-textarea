@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from "@/integrations/supabase/client";
 import { Plus } from 'lucide-react';
@@ -60,12 +60,11 @@ export default function Projects() {
 
     const { data, error } = await supabase
       .from('projects')
-      .insert([
-        { 
-          title: 'New Project',
-          description: 'Start building something amazing'
-        }
-      ])
+      .insert({
+        title: 'New Project',
+        description: 'Start building something amazing',
+        user_id: session.session.user.id
+      })
       .select()
       .single();
 
