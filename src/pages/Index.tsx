@@ -1,4 +1,3 @@
-
 import { VercelV0Chat } from "@/components/ui/v0-ai-chat";
 import { Squares } from "@/components/ui/squares-background";
 import { useState, useEffect } from "react";
@@ -66,23 +65,26 @@ const Index = () => {
         headers: {
           'Content-Type': 'application/json',
           'anthropic-version': '2023-06-01',
-          'x-api-key': ANTHROPIC_API_KEY
+          'x-api-key': ANTHROPIC_API_KEY,
+          'accept': 'application/json'
         },
         body: JSON.stringify({
           model: 'claude-3-opus-20240229',
           max_tokens: 4000,
+          system: "You are an expert at creating React applications. Generate all necessary files as valid JSON.",
           messages: [{
             role: 'user',
             content: `Generate a complete React web application based on this prompt: ${prompt}. 
             Return only the necessary files and their content in a JSON format. Include package.json, 
-            index.html, and any required React components. Format the response as valid JSON with 
-            file paths as keys and file contents as values.`
+            index.html, and any required React components. Format the response as valid JSON where each key is a file path and each value is the complete file content.
+            Make sure the generated JSON is properly escaped and valid.`
           }]
         })
       });
 
       if (!response.ok) {
         const errorData = await response.json();
+        console.error('API Error:', errorData); // Debug log
         throw new Error(`Failed to generate app: ${errorData.error?.message || 'Unknown error'}`);
       }
 
