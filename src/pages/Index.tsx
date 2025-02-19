@@ -76,28 +76,8 @@ const Index = () => {
       
       {isBuilding ? (
         <div className="flex w-full h-screen">
-          {/* File Tree */}
-          <div className="w-64 h-full border-r border-neutral-800 p-4 bg-black/20">
-            <Tree
-              className="h-full rounded-md"
-              initialExpandedItems={["1", "2", "3"]}
-            >
-              <Folder element="src" value="1">
-                <Folder element="components" value="2">
-                  <Folder element="ui" value="3">
-                    <File value="4">button.tsx</File>
-                    <File value="5">dialog.tsx</File>
-                  </Folder>
-                </Folder>
-                <Folder element="pages" value="6">
-                  <File value="7">index.tsx</File>
-                </Folder>
-              </Folder>
-            </Tree>
-          </div>
-
           {/* Chat Interface */}
-          <div className="flex-1 h-full border-r border-neutral-800 flex flex-col">
+          <div className="w-1/2 h-full border-r border-neutral-800 flex flex-col">
             {/* Chat History */}
             <div className="flex-1 overflow-auto p-4 space-y-4">
               {messages.map((message, index) => (
@@ -135,17 +115,34 @@ const Index = () => {
           </div>
           
           {/* Preview Container */}
-          <div className="w-[600px] h-full bg-neutral-900/50 flex flex-col">
-            <div className="w-full h-full rounded-xl border border-neutral-800 bg-black/50 backdrop-blur-sm overflow-hidden">
-              <div className="h-8 bg-neutral-900 border-b border-neutral-800 flex items-center px-4">
-                <div className="flex items-center space-x-2">
-                  <div className="w-3 h-3 rounded-full bg-red-500"></div>
-                  <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-                  <div className="w-3 h-3 rounded-full bg-green-500"></div>
-                </div>
-              </div>
-              <div className="p-4 text-neutral-400 text-sm">
-                Building your application...
+          <div className="w-1/2 h-full bg-neutral-900/50 flex flex-col">
+            {/* File Tree */}
+            <div className="h-1/2 border-b border-neutral-800 p-4">
+              <Tree
+                className="h-full rounded-md bg-black/50 border border-neutral-800"
+                initialExpandedItems={["1", "2", "3"]}
+              >
+                <Folder element="src" value="1">
+                  <Folder element="components" value="2">
+                    <Folder element="ui" value="3">
+                      <File value="4">button.tsx</File>
+                      <File value="5">dialog.tsx</File>
+                    </Folder>
+                  </Folder>
+                  <Folder element="pages" value="6">
+                    <File value="7">index.tsx</File>
+                  </Folder>
+                </Folder>
+              </Tree>
+            </div>
+
+            {/* Terminal */}
+            <div className="flex-1 p-4">
+              <div className="h-full rounded-md border border-neutral-800 bg-black/50 p-4 font-mono text-sm text-neutral-300 overflow-auto">
+                <p className="text-green-500">$ Starting development server...</p>
+                <p className="text-neutral-500 mt-2">Ready - started server on 0.0.0.0:3000</p>
+                <p className="text-neutral-500">Event: compiled client and server successfully in 300 ms</p>
+                <p className="text-neutral-400 mt-2 animate-pulse">▋</p>
               </div>
             </div>
           </div>
