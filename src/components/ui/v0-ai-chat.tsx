@@ -4,6 +4,7 @@
 import { useState } from "react";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
+import { TextShimmer } from "@/components/ui/text-shimmer";
 import {
     ImageIcon,
     FileUp,
@@ -114,9 +115,13 @@ export function VercelV0Chat() {
 
     return (
         <div className="flex flex-col items-center justify-center w-full h-screen max-w-4xl mx-auto p-4 space-y-8">
-            <h1 className="text-4xl font-bold text-white">
+            <TextShimmer 
+                as="h1"
+                className="text-4xl font-bold [--base-color:#ffffff] [--base-gradient-color:#a1a1aa]"
+                duration={3}
+            >
                 What can I help you ship?
-            </h1>
+            </TextShimmer>
 
             <div className="w-full">
                 <div className="relative bg-neutral-900 rounded-xl border border-neutral-800">
