@@ -161,16 +161,18 @@ const Index = () => {
       {/* Auth Buttons */}
       <div className="absolute top-4 right-4 flex gap-4 z-50">
         <Button
-          variant="default"
+          variant="ghost"
           size="default"
           onClick={() => navigate('/auth')}
+          className="text-white hover:text-white"
         >
           Sign In
         </Button>
         <Button
-          variant="solid"
+          variant="ghost"
           size="default"
           onClick={() => navigate('/auth?signup=true')}
+          className="text-white hover:text-white"
         >
           Sign Up
         </Button>
