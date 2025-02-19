@@ -9,7 +9,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/neon-button";
 import { useNavigate } from "react-router-dom";
 import { AnimatedShinyText } from "@/components/ui/animated-shiny-text";
-import { Badge } from "@/components/ui/badge";
 
 // Initialize WebContainer auth once, outside of the component
 auth.init({
@@ -187,11 +186,9 @@ const Index = () => {
                 <div className="h-screen flex flex-col border-r border-neutral-800">
                   <div className="flex-1 overflow-auto p-4 space-y-4">
                     <div className="mb-4">
-                      <Badge variant="outline" className="w-full flex justify-center">
-                        <AnimatedShinyText className="text-center text-sm text-white">
-                          Built by ONE|X Tech
-                        </AnimatedShinyText>
-                      </Badge>
+                      <AnimatedShinyText className="text-center text-sm text-white">
+                        Built by ONE|X Tech
+                      </AnimatedShinyText>
                     </div>
                     {messages.map((message, index) => (
                       <div key={index} className="flex items-start gap-3">
@@ -266,11 +263,9 @@ const Index = () => {
           ) : (
             <div className="flex items-center justify-center min-h-screen">
               <div className="w-full max-w-2xl space-y-4">
-                <Badge variant="outline" className="w-full flex justify-center">
-                  <AnimatedShinyText className="text-center text-sm text-white mb-4">
-                    Built by ONE|X Tech
-                  </AnimatedShinyText>
-                </Badge>
+                <AnimatedShinyText className="text-center text-sm text-white mb-4">
+                  Built by ONE|X Tech
+                </AnimatedShinyText>
                 <div className="relative rounded-xl">
                   <GlowingEffect
                     spread={40}
