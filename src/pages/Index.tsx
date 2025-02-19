@@ -49,7 +49,6 @@ const Index = () => {
     try {
       setLoadingState('Generating app from your prompt...');
       
-      // Use type assertion to tell TypeScript about the structure
       const { data: secretData, error: secretError } = await supabase
         .from('secrets')
         .select('secret')
@@ -66,8 +65,8 @@ const Index = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'x-api-key': ANTHROPIC_API_KEY,
-          'anthropic-version': '2023-06-01'
+          'anthropic-version': '2023-06-01',
+          'x-api-key': ANTHROPIC_API_KEY
         },
         body: JSON.stringify({
           model: 'claude-3-opus-20240229',
@@ -83,10 +82,17 @@ const Index = () => {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to generate app');
+        const errorData = await response.json();
+        throw new Error(`Failed to generate app: ${errorData.error?.message || 'Unknown error'}`);
       }
 
       const responseData = await response.json();
+      console.log('Claude response:', responseData); // Debug log
+
+      if (!responseData.content || !responseData.content[0] || !responseData.content[0].text) {
+        throw new Error('Invalid response format from Claude');
+      }
+
       const generatedFiles = JSON.parse(responseData.content[0].text);
 
       if (webcontainerInstance) {
