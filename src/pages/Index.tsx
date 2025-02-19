@@ -1,4 +1,3 @@
-
 import { VercelV0Chat } from "@/components/ui/v0-ai-chat";
 import { Squares } from "@/components/ui/squares-background";
 import { useState, useEffect } from "react";
@@ -9,6 +8,7 @@ import { GlowingEffect } from "@/components/ui/glowing-effect";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/neon-button";
 import { useNavigate } from "react-router-dom";
+import { AnimatedShinyText } from "@/components/ui/animated-shiny-text";
 
 // Initialize WebContainer auth once, outside of the component
 auth.init({
@@ -185,6 +185,11 @@ const Index = () => {
               <ResizablePanel defaultSize={50} minSize={30}>
                 <div className="h-screen flex flex-col border-r border-neutral-800">
                   <div className="flex-1 overflow-auto p-4 space-y-4">
+                    <div className="mb-4">
+                      <AnimatedShinyText className="text-center text-sm text-white">
+                        Built by ONE|X Tech
+                      </AnimatedShinyText>
+                    </div>
                     {messages.map((message, index) => (
                       <div key={index} className="flex items-start gap-3">
                         <div className="w-8 h-8 rounded-lg bg-neutral-800 flex items-center justify-center shrink-0">
@@ -257,16 +262,21 @@ const Index = () => {
             </ResizablePanelGroup>
           ) : (
             <div className="flex items-center justify-center min-h-screen">
-              <div className="relative w-full max-w-2xl rounded-xl">
-                <GlowingEffect
-                  spread={40}
-                  glow={true}
-                  disabled={false}
-                  proximity={64}
-                  inactiveZone={0.01}
-                  borderWidth={2}
-                />
-                <VercelV0Chat onSubmit={handleSubmit} inBuildMode={false} />
+              <div className="w-full max-w-2xl space-y-4">
+                <AnimatedShinyText className="text-center text-sm text-white mb-4">
+                  Built by ONE|X Tech
+                </AnimatedShinyText>
+                <div className="relative rounded-xl">
+                  <GlowingEffect
+                    spread={40}
+                    glow={true}
+                    disabled={false}
+                    proximity={64}
+                    inactiveZone={0.01}
+                    borderWidth={2}
+                  />
+                  <VercelV0Chat onSubmit={handleSubmit} inBuildMode={false} />
+                </div>
               </div>
             </div>
           )}
