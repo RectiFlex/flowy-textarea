@@ -64,33 +64,31 @@ const Index = () => {
       const response = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          'anthropic-version': '2023-06-01',
+          'content-type': 'application/json',
           'x-api-key': ANTHROPIC_API_KEY,
-          'accept': 'application/json'
+          'anthropic-version': '2023-06-01'
         },
         body: JSON.stringify({
           model: 'claude-3-opus-20240229',
-          max_tokens: 4000,
-          system: "You are an expert at creating React applications. Generate all necessary files as valid JSON.",
           messages: [{
             role: 'user',
             content: `Generate a complete React web application based on this prompt: ${prompt}. 
-            Return only the necessary files and their content in a JSON format. Include package.json, 
-            index.html, and any required React components. Format the response as valid JSON where each key is a file path and each value is the complete file content.
-            Make sure the generated JSON is properly escaped and valid.`
-          }]
+            Return only the necessary files and their content in a JSON format where each key is a file path and each value is the complete file content.
+            Include package.json, index.html, and any required React components. The response must be valid JSON that can be parsed with JSON.parse().`
+          }],
+          system: "You are an expert at creating React applications. Your responses should only contain valid JSON where each key is a file path and each value is the complete file content.",
+          max_tokens: 4000
         })
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        console.error('API Error:', errorData); // Debug log
+        console.error('Anthropic API Error:', errorData);
         throw new Error(`Failed to generate app: ${errorData.error?.message || 'Unknown error'}`);
       }
 
       const responseData = await response.json();
-      console.log('Claude response:', responseData); // Debug log
+      console.log('Claude response:', responseData);
 
       if (!responseData.content || !responseData.content[0] || !responseData.content[0].text) {
         throw new Error('Invalid response format from Claude');
