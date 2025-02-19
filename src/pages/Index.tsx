@@ -1,12 +1,14 @@
 
 import { VercelV0Chat } from "@/components/ui/v0-ai-chat";
 import { Squares } from "@/components/ui/squares-background";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { WebContainer, auth } from '@webcontainer/api';
 import { useToast } from "@/components/ui/use-toast";
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
 import { GlowingEffect } from "@/components/ui/glowing-effect";
 import { supabase } from "@/integrations/supabase/client";
+import { Button } from "@/components/ui/neon-button";
+import { useNavigate } from "react-router-dom";
 
 // Initialize WebContainer auth once, outside of the component
 auth.init({
@@ -23,6 +25,7 @@ const Index = () => {
   const [isBuilding, setIsBuilding] = useState(false);
   const [loadingState, setLoadingState] = useState<string>('');
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [messages, setMessages] = useState([
     {
       role: 'assistant',
@@ -153,6 +156,24 @@ const Index = () => {
           borderColor="#333" 
           hoverFillColor="#222"
         />
+      </div>
+
+      {/* Auth Buttons */}
+      <div className="absolute top-4 right-4 flex gap-4 z-50">
+        <Button
+          variant="default"
+          size="default"
+          onClick={() => navigate('/auth')}
+        >
+          Sign In
+        </Button>
+        <Button
+          variant="solid"
+          size="default"
+          onClick={() => navigate('/auth?signup=true')}
+        >
+          Sign Up
+        </Button>
       </div>
       
       <div className="flex h-screen">

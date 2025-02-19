@@ -1,8 +1,9 @@
 
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
+import { Button } from "@/components/ui/neon-button";
 
 export default function Auth() {
   const [isSignUp, setIsSignUp] = useState(false);
@@ -10,7 +11,13 @@ export default function Auth() {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
   const { toast } = useToast();
+
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    setIsSignUp(searchParams.get('signup') === 'true');
+  }, [location]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -84,13 +91,14 @@ export default function Auth() {
             />
           </div>
 
-          <button
+          <Button
             type="submit"
             disabled={loading}
-            className="w-full py-3 px-4 bg-white/10 hover:bg-white/15 text-white rounded-lg border border-white/20 transition-colors disabled:opacity-50"
+            variant="solid"
+            className="w-full"
           >
             {loading ? 'Please wait...' : (isSignUp ? 'Sign Up' : 'Sign In')}
-          </button>
+          </Button>
 
           <p className="text-sm text-center text-white/60">
             {isSignUp ? 'Already have an account?' : "Don't have an account?"}{' '}
@@ -106,4 +114,4 @@ export default function Auth() {
       </div>
     </div>
   );
-}
+};
