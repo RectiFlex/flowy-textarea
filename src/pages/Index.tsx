@@ -1,3 +1,4 @@
+
 import { VercelV0Chat } from "@/components/ui/v0-ai-chat";
 import { Squares } from "@/components/ui/squares-background";
 import { useState, useEffect } from "react";
@@ -5,7 +6,6 @@ import { WebContainer } from '@webcontainer/api';
 import { useToast } from "@/components/ui/use-toast";
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
 import { GlowingEffect } from "@/components/ui/glowing-effect";
-import { ProjectSidebar } from "@/components/ProjectSidebar";
 
 const Index = () => {
   const [isBuilding, setIsBuilding] = useState(false);
@@ -96,8 +96,6 @@ const Index = () => {
       </div>
       
       <div className="flex h-screen">
-        <ProjectSidebar />
-        
         <div className="flex-1">
           {isBuilding ? (
             <ResizablePanelGroup direction="horizontal" className="h-screen">
