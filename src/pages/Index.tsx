@@ -9,7 +9,7 @@ const Index = () => {
   const [messages, setMessages] = useState([
     {
       role: 'assistant',
-      content: 'Hi! What would you like to build today?'
+      content: 'Hi! Welcome to ONE|X. What would you like to build today?'
     }
   ]);
   const [webcontainerInstance, setWebcontainerInstance] = useState<WebContainer | null>(null);
@@ -18,11 +18,9 @@ const Index = () => {
     if (isBuilding) {
       const bootWebContainer = async () => {
         try {
-          // Initialize the WebContainer
           const wc = await WebContainer.boot();
           setWebcontainerInstance(wc);
 
-          // Set up initial files
           await wc.mount({
             'index.html': {
               file: {
@@ -30,7 +28,7 @@ const Index = () => {
                   <!DOCTYPE html>
                   <html>
                     <head>
-                      <title>WebContainer App</title>
+                      <title>ONE|X App</title>
                     </head>
                     <body>
                       <div id="root"></div>
@@ -43,7 +41,7 @@ const Index = () => {
               file: {
                 contents: `
                   {
-                    "name": "example-app",
+                    "name": "onex-app",
                     "type": "module",
                     "dependencies": {}
                   }
@@ -90,7 +88,7 @@ const Index = () => {
                 <div key={index} className="flex items-start gap-3">
                   <div className="w-8 h-8 rounded-lg bg-neutral-800 flex items-center justify-center shrink-0">
                     <span className="text-sm text-white">
-                      {message.role === 'assistant' ? 'v0' : 'you'}
+                      {message.role === 'assistant' ? 'ONE|X' : 'you'}
                     </span>
                   </div>
                   <div className={`flex-1 rounded-lg p-4 ${
