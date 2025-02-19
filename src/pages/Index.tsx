@@ -94,7 +94,8 @@ const Index = () => {
           });
 
           setLoadingState('Installing dependencies...');
-          await wc.installDependencies();
+          const installProcess = await wc.spawn('npm', ['install']);
+          await installProcess.exit;
           
           setLoadingState('');
         } catch (error) {
