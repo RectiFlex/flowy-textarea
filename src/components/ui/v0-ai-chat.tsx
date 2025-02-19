@@ -15,7 +15,6 @@ import {
     Paperclip,
     PlusIcon,
 } from "lucide-react";
-
 import { useEffect, useRef, useCallback } from "react";
 
 interface UseAutoResizeTextareaProps {
@@ -76,6 +75,7 @@ function useAutoResizeTextarea({
 
 export function VercelV0Chat() {
     const [value, setValue] = useState("");
+    const [isBuilding, setIsBuilding] = useState(false);
     const { textareaRef, adjustHeight } = useAutoResizeTextarea({
         minHeight: 60,
         maxHeight: 200,
@@ -92,9 +92,11 @@ export function VercelV0Chat() {
 
     const handleSendMessage = () => {
         if (value.trim()) {
-            console.log("Sending message:", value);
+            console.log("Starting build process with prompt:", value);
+            setIsBuilding(true);
             setValue("");
             adjustHeight(true);
+            // Here you would typically start the actual build process
         }
     };
 
@@ -114,7 +116,7 @@ export function VercelV0Chat() {
     };
 
     return (
-        <div className="flex flex-col items-center justify-center w-full h-screen max-w-4xl mx-auto p-4 space-y-8">
+        <div className="flex flex-col items-center justify-center w-full h-full p-4 space-y-8">
             <TextShimmer 
                 as="h1"
                 className="text-4xl font-bold [--base-color:#ffffff] [--base-gradient-color:#a1a1aa]"
@@ -183,6 +185,7 @@ export function VercelV0Chat() {
                                         : "text-zinc-400"
                                 )}
                                 onClick={handleSendMessage}
+                                disabled={isBuilding}
                             >
                                 <ArrowUpIcon
                                     className={cn(
@@ -198,7 +201,7 @@ export function VercelV0Chat() {
                     </div>
                 </div>
 
-                <div className="flex items-center justify-center gap-3 mt-4">
+                <div className="flex items-center justify-center gap-3 mt-4 flex-wrap">
                     <ActionButton
                         icon={<ImageIcon className="w-4 h-4" />}
                         label="Clone a Screenshot"
