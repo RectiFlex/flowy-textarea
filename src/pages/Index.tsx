@@ -37,15 +37,17 @@ const Index = () => {
     try {
       setLoadingState('Generating app from your prompt...');
       
-      const { data: { secret: ANTHROPIC_API_KEY } } = await supabase
+      const { data, error } = await supabase
         .from('secrets')
         .select('secret')
         .eq('name', 'ANTHROPIC_API_KEY')
         .single();
 
-      if (!ANTHROPIC_API_KEY) {
+      if (error || !data) {
         throw new Error('Anthropic API key not found');
       }
+
+      const ANTHROPIC_API_KEY = data.secret;
 
       const response = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
