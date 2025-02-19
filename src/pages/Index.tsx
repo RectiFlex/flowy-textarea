@@ -1,4 +1,3 @@
-
 import { VercelV0Chat } from "@/components/ui/v0-ai-chat";
 import { Squares } from "@/components/ui/squares-background";
 import { useState, useEffect } from "react";
@@ -38,17 +37,17 @@ const Index = () => {
     try {
       setLoadingState('Generating app from your prompt...');
       
-      const { data, error } = await supabase
+      const { data: secretData, error: secretError } = await supabase
         .from('secrets')
         .select('secret')
         .eq('name', 'ANTHROPIC_API_KEY')
         .single();
 
-      if (error || !data) {
+      if (secretError || !secretData) {
         throw new Error('Anthropic API key not found');
       }
 
-      const ANTHROPIC_API_KEY = data.secret;
+      const ANTHROPIC_API_KEY = secretData.secret;
 
       const response = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
