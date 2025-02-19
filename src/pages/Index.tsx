@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import { WebContainer } from '@webcontainer/api';
 import { useToast } from "@/components/ui/use-toast";
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
+import { GlowingEffect } from "@/components/ui/glowing-effect";
 
 const Index = () => {
   const [isBuilding, setIsBuilding] = useState(false);
@@ -107,12 +108,20 @@ const Index = () => {
                         {message.role === 'assistant' ? 'ONE|X' : 'you'}
                       </span>
                     </div>
-                    <div className={`flex-1 rounded-lg p-4 ${
+                    <div className={`relative flex-1 rounded-lg p-4 ${
                       message.role === 'assistant' 
                         ? 'bg-neutral-900/50 text-neutral-200' 
                         : 'bg-blue-600/20 text-blue-200'
                     }`}>
-                      <p className="text-sm">{message.content}</p>
+                      <GlowingEffect
+                        spread={40}
+                        glow={true}
+                        disabled={false}
+                        proximity={64}
+                        inactiveZone={0.01}
+                        borderWidth={2}
+                      />
+                      <p className="text-sm relative z-10">{message.content}</p>
                     </div>
                   </div>
                 ))}
@@ -120,7 +129,15 @@ const Index = () => {
               
               {/* Chat Input */}
               <div className="p-4 border-t border-neutral-800">
-                <div className="w-full">
+                <div className="relative w-full rounded-xl">
+                  <GlowingEffect
+                    spread={40}
+                    glow={true}
+                    disabled={false}
+                    proximity={64}
+                    inactiveZone={0.01}
+                    borderWidth={2}
+                  />
                   <VercelV0Chat 
                     onSubmit={(msg: string) => {
                       setMessages(prev => [...prev, 
@@ -158,7 +175,15 @@ const Index = () => {
         </ResizablePanelGroup>
       ) : (
         <div className="flex items-center justify-center min-h-screen">
-          <div className="w-full max-w-2xl">
+          <div className="relative w-full max-w-2xl rounded-xl">
+            <GlowingEffect
+              spread={40}
+              glow={true}
+              disabled={false}
+              proximity={64}
+              inactiveZone={0.01}
+              borderWidth={2}
+            />
             <VercelV0Chat onSubmit={handleSubmit} inBuildMode={false} />
           </div>
         </div>
