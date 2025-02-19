@@ -158,9 +158,9 @@ const Index = () => {
 
               {/* Web Container - Right Side */}
               <ResizablePanel defaultSize={50} minSize={30}>
-                <div className="h-screen relative">
+                <div className="h-screen relative p-4">
                   {loadingState && (
-                    <div className="absolute inset-0 flex items-center justify-center bg-neutral-900/80 z-10">
+                    <div className="absolute inset-0 flex items-center justify-center bg-neutral-900/80 z-10 rounded-xl">
                       <div className="text-white text-center">
                         <div className="animate-spin h-8 w-8 border-4 border-t-blue-500 border-neutral-700 rounded-full mb-4 mx-auto"></div>
                         <p>{loadingState}</p>
@@ -169,7 +169,7 @@ const Index = () => {
                   )}
                   <iframe
                     id="webcontainer-iframe"
-                    className="w-full h-full bg-neutral-900"
+                    className="w-full h-full bg-neutral-900 rounded-xl border border-neutral-800"
                     title="WebContainer Preview"
                   />
                 </div>
