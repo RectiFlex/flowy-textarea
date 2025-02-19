@@ -3,9 +3,12 @@ import { VercelV0Chat } from "@/components/ui/v0-ai-chat";
 import { Squares } from "@/components/ui/squares-background";
 import { useState, useEffect } from "react";
 import { WebContainer } from '@webcontainer/api';
+import { useToast } from "@/components/ui/use-toast";
 
 const Index = () => {
   const [isBuilding, setIsBuilding] = useState(false);
+  const [loadingState, setLoadingState] = useState<string>('');
+  const { toast } = useToast();
   const [messages, setMessages] = useState([
     {
       role: 'assistant',
@@ -18,8 +21,10 @@ const Index = () => {
     if (isBuilding) {
       const bootWebContainer = async () => {
         try {
+          setLoadingState('Initializing development environment...');
           const wc = await WebContainer.boot();
           setWebcontainerInstance(wc);
+          setLoadingState('Setting up project files...');
 
           await wc.mount({
             'index.html': {
@@ -28,6 +33,8 @@ const Index = () => {
                   <!DOCTYPE html>
                   <html>
                     <head>
+                      <meta http-equiv="Cross-Origin-Opener-Policy" content="same-origin">
+                      <meta http-equiv="Cross-Origin-Embedder-Policy" content="require-corp">
                       <title>ONE|X App</title>
                     </head>
                     <body>
@@ -49,8 +56,15 @@ const Index = () => {
               }
             }
           });
+          setLoadingState('');
         } catch (error) {
           console.error('Failed to boot WebContainer:', error);
+          toast({
+            title: "Error",
+            description: "Failed to initialize the development environment. Please ensure you're using a modern browser and try again.",
+            variant: "destructive"
+          });
+          setLoadingState('');
         }
       };
 
@@ -119,10 +133,18 @@ const Index = () => {
           </div>
 
           {/* Web Container - Right Side */}
-          <div className="w-1/2 h-full">
+          <div className="w-1/2 h-full relative">
+            {loadingState && (
+              <div className="absolute inset-0 flex items-center justify-center bg-neutral-900/80 z-10">
+                <div className="text-white text-center">
+                  <div className="animate-spin h-8 w-8 border-4 border-t-blue-500 border-neutral-700 rounded-full mb-4 mx-auto"></div>
+                  <p>{loadingState}</p>
+                </div>
+              </div>
+            )}
             <iframe
               id="webcontainer-iframe"
-              className="w-full h-full bg-white"
+              className="w-full h-full bg-neutral-900"
               title="WebContainer Preview"
             />
           </div>
