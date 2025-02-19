@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState } from "react";
@@ -74,7 +73,7 @@ function useAutoResizeTextarea({
 }
 
 interface VercelV0ChatProps {
-    onSubmit: () => void;
+    onSubmit: (message: string) => void;
     inBuildMode: boolean;
 }
 
@@ -96,10 +95,10 @@ export function VercelV0Chat({ onSubmit, inBuildMode }: VercelV0ChatProps) {
 
     const handleSendMessage = () => {
         if (value.trim()) {
-            console.log("Starting build with prompt:", value);
+            console.log("Sending message:", value);
+            onSubmit(value);
             setValue("");
             adjustHeight(true);
-            onSubmit();
         }
     };
 

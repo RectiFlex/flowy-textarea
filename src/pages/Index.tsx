@@ -5,6 +5,25 @@ import { useState } from "react";
 
 const Index = () => {
   const [isBuilding, setIsBuilding] = useState(false);
+  const [messages, setMessages] = useState([
+    {
+      role: 'assistant',
+      content: 'Hi! What would you like to build today?'
+    }
+  ]);
+
+  const handleSubmit = (message: string) => {
+    // Add user message
+    setMessages(prev => [...prev, { role: 'user', content: message }]);
+    
+    // Add assistant response
+    setMessages(prev => [...prev, { 
+      role: 'assistant', 
+      content: 'I\'ll help you build that. Let me start the process...'
+    }]);
+    
+    setIsBuilding(true);
+  };
 
   return (
     <div className="relative min-h-screen w-full">
@@ -23,21 +42,37 @@ const Index = () => {
           {/* Chat Interface */}
           <div className="w-1/2 h-full border-r border-neutral-800 flex flex-col">
             {/* Chat History */}
-            <div className="flex-1 overflow-auto p-4">
-              <div className="flex items-start gap-3 mb-4">
-                <div className="w-8 h-8 rounded-lg bg-neutral-800 flex items-center justify-center">
-                  <span className="text-sm text-white">v0</span>
+            <div className="flex-1 overflow-auto p-4 space-y-4">
+              {messages.map((message, index) => (
+                <div key={index} className="flex items-start gap-3">
+                  <div className="w-8 h-8 rounded-lg bg-neutral-800 flex items-center justify-center shrink-0">
+                    <span className="text-sm text-white">
+                      {message.role === 'assistant' ? 'v0' : 'you'}
+                    </span>
+                  </div>
+                  <div className={`flex-1 rounded-lg p-4 ${
+                    message.role === 'assistant' 
+                      ? 'bg-neutral-900/50 text-neutral-200' 
+                      : 'bg-blue-600/20 text-blue-200'
+                  }`}>
+                    <p className="text-sm">{message.content}</p>
+                  </div>
                 </div>
-                <div className="flex-1">
-                  <p className="text-neutral-400">Starting build process...</p>
-                </div>
-              </div>
+              ))}
             </div>
             
             {/* Chat Input */}
             <div className="p-4 border-t border-neutral-800">
               <div className="w-full max-w-2xl mx-auto">
-                <VercelV0Chat onSubmit={() => {}} inBuildMode={true} />
+                <VercelV0Chat 
+                  onSubmit={(msg: string) => {
+                    setMessages(prev => [...prev, 
+                      { role: 'user', content: msg },
+                      { role: 'assistant', content: 'Processing your request...' }
+                    ]);
+                  }} 
+                  inBuildMode={true} 
+                />
               </div>
             </div>
           </div>
@@ -61,7 +96,7 @@ const Index = () => {
       ) : (
         <div className="flex items-center justify-center min-h-screen">
           <div className="w-full max-w-2xl">
-            <VercelV0Chat onSubmit={() => setIsBuilding(true)} inBuildMode={false} />
+            <VercelV0Chat onSubmit={handleSubmit} inBuildMode={false} />
           </div>
         </div>
       )}
