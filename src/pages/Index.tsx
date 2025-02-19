@@ -21,7 +21,13 @@ const Index = () => {
   useEffect(() => {
     return () => {
       if (webcontainerInstance) {
-        webcontainerInstance.teardown().catch(console.error);
+        (async () => {
+          try {
+            await webcontainerInstance.teardown();
+          } catch (error) {
+            console.error('Error during teardown:', error);
+          }
+        })();
       }
     };
   }, [webcontainerInstance]);
@@ -88,7 +94,7 @@ const Index = () => {
           });
 
           setLoadingState('Installing dependencies...');
-          await wc.install();
+          await wc.installDependencies();
           
           setLoadingState('');
         } catch (error) {
