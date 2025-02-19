@@ -1,11 +1,18 @@
+
 import { VercelV0Chat } from "@/components/ui/v0-ai-chat";
 import { Squares } from "@/components/ui/squares-background";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { WebContainer, auth } from '@webcontainer/api';
 import { useToast } from "@/components/ui/use-toast";
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
 import { GlowingEffect } from "@/components/ui/glowing-effect";
 import { supabase } from "@/integrations/supabase/client";
+
+// Initialize WebContainer auth once, outside of the component
+auth.init({
+  clientId: 'wc_api_recti_flex_93764cd538c0cd03a80023c1b70fc042',
+  scope: '',
+});
 
 // Define a type for the secret response
 type SecretResponse = {
@@ -25,12 +32,6 @@ const Index = () => {
   const [webcontainerInstance, setWebcontainerInstance] = useState<WebContainer | null>(null);
 
   useEffect(() => {
-    // Initialize WebContainer authentication
-    auth.init({
-      clientId: 'wc_api_recti_flex_93764cd538c0cd03a80023c1b70fc042',
-      scope: '',
-    });
-
     return () => {
       if (webcontainerInstance) {
         (async () => {
