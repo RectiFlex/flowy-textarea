@@ -5,6 +5,7 @@ import { WebContainer } from '@webcontainer/api';
 import { useToast } from "@/components/ui/use-toast";
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
 import { GlowingEffect } from "@/components/ui/glowing-effect";
+import { supabase } from "@/integrations/supabase/client";
 
 const Index = () => {
   const [isBuilding, setIsBuilding] = useState(false);
@@ -32,95 +33,92 @@ const Index = () => {
     };
   }, [webcontainerInstance]);
 
-  useEffect(() => {
-    if (isBuilding && !webcontainerInstance) {
-      const bootWebContainer = async () => {
-        try {
-          if (webcontainerInstance) {
-            await webcontainerInstance.teardown();
-          }
+  const generateAppFromPrompt = async (prompt: string) => {
+    try {
+      setLoadingState('Generating app from your prompt...');
+      
+      const { data: { secret: ANTHROPIC_API_KEY } } = await supabase
+        .from('secrets')
+        .select('secret')
+        .eq('name', 'ANTHROPIC_API_KEY')
+        .single();
 
-          setLoadingState('Initializing development environment...');
-          
-          await new Promise(resolve => setTimeout(resolve, 1000));
-          
-          const wc = await WebContainer.boot();
-          setWebcontainerInstance(wc);
-          setLoadingState('Setting up project files...');
+      if (!ANTHROPIC_API_KEY) {
+        throw new Error('Anthropic API key not found');
+      }
 
-          await wc.mount({
-            'index.html': {
-              file: {
-                contents: `
-                  <!DOCTYPE html>
-                  <html>
-                    <head>
-                      <meta charset="UTF-8">
-                      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                      <meta http-equiv="Cross-Origin-Opener-Policy" content="same-origin">
-                      <meta http-equiv="Cross-Origin-Embedder-Policy" content="require-corp">
-                      <title>ONE|X App</title>
-                    </head>
-                    <body>
-                      <div id="root"></div>
-                    </body>
-                  </html>
-                `,
-              },
-            },
-            'package.json': {
-              file: {
-                contents: `
-                  {
-                    "name": "onex-app",
-                    "type": "module",
-                    "scripts": {
-                      "start": "vite",
-                      "build": "vite build",
-                      "serve": "vite preview"
-                    },
-                    "dependencies": {
-                      "react": "^18.2.0",
-                      "react-dom": "^18.2.0"
-                    },
-                    "devDependencies": {
-                      "@vitejs/plugin-react": "^4.0.0",
-                      "vite": "^4.3.9"
-                    }
-                  }
-                `
-              }
-            }
-          });
+      const response = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': ANTHROPIC_API_KEY,
+          'anthropic-version': '2023-06-01'
+        },
+        body: JSON.stringify({
+          model: 'claude-3-opus-20240229',
+          max_tokens: 4000,
+          messages: [{
+            role: 'user',
+            content: `Generate a complete React web application based on this prompt: ${prompt}. 
+            Return only the necessary files and their content in a JSON format. Include package.json, 
+            index.html, and any required React components. Format the response as valid JSON with 
+            file paths as keys and file contents as values.`
+          }]
+        })
+      });
 
-          setLoadingState('Installing dependencies...');
-          const installProcess = await wc.spawn('npm', ['install']);
-          await installProcess.exit;
-          
-          setLoadingState('');
-        } catch (error) {
-          console.error('Failed to boot WebContainer:', error);
-          toast({
-            title: "Error",
-            description: "Failed to initialize the development environment. Please try refreshing the page.",
-            variant: "destructive"
-          });
-          setLoadingState('');
-          setIsBuilding(false);
+      if (!response.ok) {
+        throw new Error('Failed to generate app');
+      }
+
+      const data = await response.json();
+      const generatedFiles = JSON.parse(data.content[0].text);
+
+      if (webcontainerInstance) {
+        await webcontainerInstance.teardown();
+      }
+
+      setLoadingState('Initializing development environment...');
+      const wc = await WebContainer.boot();
+      setWebcontainerInstance(wc);
+
+      setLoadingState('Setting up project files...');
+      await wc.mount(generatedFiles);
+
+      setLoadingState('Installing dependencies...');
+      const installProcess = await wc.spawn('npm', ['install']);
+      await installProcess.exit;
+
+      setLoadingState('Starting development server...');
+      const startProcess = await wc.spawn('npm', ['start']);
+      
+      startProcess.output.pipeTo(new WritableStream({
+        write(data) {
+          console.log(data);
         }
-      };
+      }));
 
-      bootWebContainer();
+      setLoadingState('');
+    } catch (error) {
+      console.error('Error generating app:', error);
+      toast({
+        title: "Error",
+        description: error.message || "Failed to generate the application. Please try again.",
+        variant: "destructive"
+      });
+      setLoadingState('');
+      setIsBuilding(false);
     }
-  }, [isBuilding, webcontainerInstance]);
+  };
 
-  const handleSubmit = (message: string) => {
+  const handleSubmit = async (message: string) => {
     setMessages(prev => [...prev, { role: 'user', content: message }]);
     setMessages(prev => [...prev, { 
       role: 'assistant', 
-      content: 'I\'ll help you build that. Let me start the process...'
+      content: 'I\'ll help you build that. Let me generate the app from your prompt...'
     }]);
     setIsBuilding(true);
+    await generateAppFromPrompt(message);
   };
 
   return (
