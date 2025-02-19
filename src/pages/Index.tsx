@@ -1,3 +1,4 @@
+
 import { VercelV0Chat } from "@/components/ui/v0-ai-chat";
 import { Squares } from "@/components/ui/squares-background";
 import { useState, useEffect } from "react";
@@ -73,8 +74,8 @@ const Index = () => {
         throw new Error('Failed to generate app');
       }
 
-      const data = await response.json();
-      const generatedFiles = JSON.parse(data.content[0].text);
+      const responseData = await response.json();
+      const generatedFiles = JSON.parse(responseData.content[0].text);
 
       if (webcontainerInstance) {
         await webcontainerInstance.teardown();
