@@ -130,7 +130,7 @@ export function VercelV0Chat({ onSubmit, inBuildMode }: VercelV0ChatProps) {
                                 adjustHeight();
                             }}
                             onKeyDown={handleKeyDown}
-                            placeholder="Continue the conversation..."
+                            placeholder="What can ONE|X build for you?"
                             className={cn(
                                 "w-full px-4 py-3",
                                 "resize-none",
@@ -194,7 +194,7 @@ export function VercelV0Chat({ onSubmit, inBuildMode }: VercelV0ChatProps) {
                 className="text-4xl font-bold text-center [--base-color:#ffffff] [--base-gradient-color:#a1a1aa]"
                 duration={3}
             >
-                What can I help you ship?
+                What can ONE|X build for you?
             </TextShimmer>
 
             <div className="w-full">
@@ -208,7 +208,7 @@ export function VercelV0Chat({ onSubmit, inBuildMode }: VercelV0ChatProps) {
                                 adjustHeight();
                             }}
                             onKeyDown={handleKeyDown}
-                            placeholder="Ask v0 a question..."
+                            placeholder="Ask ONE|X what to build..."
                             className={cn(
                                 "w-full px-4 py-3",
                                 "resize-none",
