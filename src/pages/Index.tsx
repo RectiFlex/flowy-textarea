@@ -21,8 +21,10 @@ const Index = () => {
       {isBuilding ? (
         <div className="flex w-full h-screen">
           {/* Chat Interface */}
-          <div className="w-1/2 h-full overflow-auto border-r border-neutral-800">
-            <VercelV0Chat onSubmit={() => {}} />
+          <div className="w-1/2 h-full overflow-auto border-r border-neutral-800 flex items-center justify-center">
+            <div className="w-full max-w-2xl">
+              <VercelV0Chat onSubmit={() => {}} />
+            </div>
           </div>
           
           {/* Preview Container */}
@@ -42,7 +44,11 @@ const Index = () => {
           </div>
         </div>
       ) : (
-        <VercelV0Chat onSubmit={() => setIsBuilding(true)} />
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="w-full max-w-2xl">
+            <VercelV0Chat onSubmit={() => setIsBuilding(true)} />
+          </div>
+        </div>
       )}
     </div>
   );

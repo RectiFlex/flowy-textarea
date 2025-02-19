@@ -117,10 +117,10 @@ export function VercelV0Chat({ onSubmit }: VercelV0ChatProps) {
     };
 
     return (
-        <div className="flex flex-col items-center justify-center w-full h-full max-w-4xl mx-auto p-4 space-y-8">
+        <div className="flex flex-col w-full p-4 space-y-8">
             <TextShimmer 
                 as="h1"
-                className="text-4xl font-bold [--base-color:#ffffff] [--base-gradient-color:#a1a1aa]"
+                className="text-4xl font-bold text-center [--base-color:#ffffff] [--base-gradient-color:#a1a1aa]"
                 duration={3}
             >
                 What can I help you ship?
