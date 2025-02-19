@@ -72,7 +72,11 @@ function useAutoResizeTextarea({
     return { textareaRef, adjustHeight };
 }
 
-export function VercelV0Chat() {
+interface VercelV0ChatProps {
+    onSubmit: () => void;
+}
+
+export function VercelV0Chat({ onSubmit }: VercelV0ChatProps) {
     const [value, setValue] = useState("");
     const { textareaRef, adjustHeight } = useAutoResizeTextarea({
         minHeight: 60,
@@ -90,9 +94,10 @@ export function VercelV0Chat() {
 
     const handleSendMessage = () => {
         if (value.trim()) {
-            console.log("Sending message:", value);
+            console.log("Starting build with prompt:", value);
             setValue("");
             adjustHeight(true);
+            onSubmit();
         }
     };
 
@@ -112,7 +117,7 @@ export function VercelV0Chat() {
     };
 
     return (
-        <div className="flex flex-col items-center justify-center w-full h-screen max-w-4xl mx-auto p-4 space-y-8">
+        <div className="flex flex-col items-center justify-center w-full h-full max-w-4xl mx-auto p-4 space-y-8">
             <TextShimmer 
                 as="h1"
                 className="text-4xl font-bold [--base-color:#ffffff] [--base-gradient-color:#a1a1aa]"
@@ -196,7 +201,7 @@ export function VercelV0Chat() {
                     </div>
                 </div>
 
-                <div className="flex items-center justify-center gap-3 mt-4">
+                <div className="flex items-center justify-center gap-3 mt-4 flex-wrap">
                     <ActionButton
                         icon={<ImageIcon className="w-4 h-4" />}
                         label="Clone a Screenshot"
