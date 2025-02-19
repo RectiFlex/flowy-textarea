@@ -1,9 +1,10 @@
 
 import { VercelV0Chat } from "@/components/ui/v0-ai-chat";
 import { Squares } from "@/components/ui/squares-background";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { File, Folder, Tree } from "@/components/ui/file-tree";
 import { Separator } from "@/components/ui/separator";
+import { WebContainer } from '@webcontainer/api';
 
 const PROJECT_FILES = [
   {
@@ -52,6 +53,42 @@ const Index = () => {
       content: 'Hi! What would you like to build today?'
     }
   ]);
+  const [webcontainerInstance, setWebcontainerInstance] = useState<WebContainer | null>(null);
+
+  useEffect(() => {
+    if (isBuilding) {
+      const bootWebContainer = async () => {
+        try {
+          // Initialize the WebContainer
+          const wc = await WebContainer.boot();
+          setWebcontainerInstance(wc);
+
+          // Set up initial files
+          await wc.mount({
+            'index.html': {
+              file: {
+                contents: `
+                  <!DOCTYPE html>
+                  <html>
+                    <head>
+                      <title>WebContainer App</title>
+                    </head>
+                    <body>
+                      <div id="root"></div>
+                    </body>
+                  </html>
+                `,
+              },
+            },
+          });
+        } catch (error) {
+          console.error('Failed to boot WebContainer:', error);
+        }
+      };
+
+      bootWebContainer();
+    }
+  }, [isBuilding]);
 
   const handleSubmit = (message: string) => {
     setMessages(prev => [...prev, { role: 'user', content: message }]);
@@ -144,7 +181,11 @@ const Index = () => {
                   <button className="px-4 py-2 text-sm text-neutral-400">Preview</button>
                 </div>
                 <div className="flex-1 p-4 bg-black/20">
-                  {/* Preview content goes here */}
+                  <iframe
+                    id="webcontainer-iframe"
+                    className="w-full h-full bg-white rounded-lg"
+                    title="WebContainer Preview"
+                  />
                 </div>
               </div>
             </div>
@@ -152,9 +193,9 @@ const Index = () => {
             {/* Terminal */}
             <div className="h-1/3 border-t border-neutral-800 p-4 bg-black/20">
               <div className="h-full rounded-md bg-black/50 p-4 font-mono text-sm text-neutral-300 overflow-auto">
-                <p className="text-green-500">$ Starting development server...</p>
-                <p className="text-neutral-500 mt-2">Ready - started server on 0.0.0.0:3000</p>
-                <p className="text-neutral-500">Event: compiled client and server successfully in 300 ms</p>
+                <p className="text-green-500">$ Starting WebContainer...</p>
+                <p className="text-neutral-500 mt-2">Initializing development environment</p>
+                <p className="text-neutral-500">Mounting initial files...</p>
                 <p className="text-neutral-400 mt-2 animate-pulse">▋</p>
               </div>
             </div>
